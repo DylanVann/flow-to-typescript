@@ -1,7 +1,9 @@
 import {
   importDeclaration,
+  importSpecifier,
   ExportNamedDeclaration,
-  exportNamedDeclaration
+  exportNamedDeclaration,
+  ImportSpecifier
 } from '@babel/types'
 import { addRule } from '../'
 
@@ -19,6 +21,12 @@ addRule('TypeImport', () => ({
       path.replaceWith(
         exportNamedDeclaration(node.declaration, node.specifiers)
       )
+    }
+  },
+  ImportSpecifier(path) {
+    const node = path.node as ImportSpecifier
+    if (node.importKind === 'type') {
+      path.replaceWith(importSpecifier(node.local, node.imported))
     }
   }
 }))

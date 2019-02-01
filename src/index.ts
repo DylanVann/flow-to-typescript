@@ -21,7 +21,14 @@ export function addRule(ruleName: string, rule: Rule) {
 
 export async function compile(code: string, filename: string) {
   const parsed = parse(code, {
-    plugins: ['classProperties', 'flow', 'objectRestSpread'],
+    plugins: [
+      'classProperties',
+      'flow',
+      'objectRestSpread',
+      'optionalChaining',
+      'nullishCoalescingOperator',
+      'jsx'
+    ],
     sourceType: 'module'
   })
   let [warnings, ast] = await convert(parsed)
