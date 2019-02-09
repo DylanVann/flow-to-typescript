@@ -1,5 +1,4 @@
-import { parse } from '@babel/parser'
-import generate from '@babel/generator'
+import * as recast from 'recast'
 import traverse, { Node, Visitor } from '@babel/traverse'
 import { File } from '@babel/types'
 import { sync } from 'glob'
@@ -20,7 +19,9 @@ export function addRule(ruleName: string, rule: Rule) {
 }
 
 export async function compile(code: string, filename: string) {
-  const parsed = parse(code, {
+  // @ts-ignore
+  const parsed = recast.parse(code, {
+    parser: require('recast/parsers/babel'),
     plugins: [
       'classProperties',
       'flow',
@@ -43,7 +44,8 @@ export async function compile(code: string, filename: string) {
   })
 
   return addTrailingSpace(
-    trimLeadingNewlines(generate(stripAtFlowAnnotation(ast)).code)
+    // @ts-ignore
+    trimLeadingNewlines(recast.print(stripAtFlowAnnotation(ast)).code)
   )
 }
 
