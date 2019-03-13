@@ -1,10 +1,17 @@
 // Adapted from https://github.com/babel/babel/blob/master/packages/babel-plugin-proposal-optional-chaining/src/index.js
 
-import { types as t } from '@babel/core'
+import {
+  isCallExpression,
+  conditionalExpression,
+  binaryExpression,
+  nullLiteral,
+  // @ts-ignore missing in typedef
+  cloneNode
+} from '@babel/types'
 import { addRule } from '..'
 
 addRule('OptionalChaining', () => ({
-  'OptionalCallExpression|OptionalMemberExpression'(path) {
+  OptionalMemberExpression(path: any) {
     const { parentPath } = path
     const optionals: any[] = []
 
@@ -34,7 +41,7 @@ addRule('OptionalChaining', () => ({
     for (let i = optionals.length - 1; i >= 0; i--) {
       const node = optionals[i]
 
-      const isCall = t.isCallExpression(node)
+      const isCall = isCallExpression(node)
       const replaceKey = isCall ? 'callee' : 'object'
       const chain = node[replaceKey]
 
@@ -45,9 +52,9 @@ addRule('OptionalChaining', () => ({
       }
 
       replacementPath.replaceWith(
-        t.conditionalExpression(
-          t.binaryExpression('==', t.cloneNode(chain), t.nullLiteral()),
-          t.nullLiteral(),
+        conditionalExpression(
+          binaryExpression('==', cloneNode(chain), nullLiteral()),
+          nullLiteral(),
           replacementPath.node
         )
       )

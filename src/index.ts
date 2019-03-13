@@ -1,4 +1,5 @@
 import * as recast from 'recast'
+import { parse, ParserOptions } from '@babel/parser'
 import traverse, { Node, Visitor } from '@babel/traverse'
 import { File } from '@babel/types'
 import { sync } from 'glob'
@@ -19,18 +20,22 @@ export function addRule(ruleName: string, rule: Rule) {
 }
 
 export async function compile(code: string, filename: string) {
-  // @ts-ignore
+  // @ts-ignore wrong typedefs
   const parsed = recast.parse(code, {
-    parser: require('recast/parsers/babel'),
-    plugins: [
-      'classProperties',
-      'flow',
-      'objectRestSpread',
-      'optionalChaining',
-      'nullishCoalescingOperator',
-      'jsx'
-    ],
-    sourceType: 'module'
+    parser: {
+      parse: (input: string, options: ParserOptions) => {
+        options.plugins = [
+          'classProperties',
+          'flow',
+          'objectRestSpread',
+          'optionalChaining',
+          'nullishCoalescingOperator',
+          'jsx'
+        ]
+        options.sourceType = 'module'
+        return parse(input, options)
+      }
+    }
   })
   let [warnings, ast] = await convert(parsed)
 
@@ -93,11 +98,19 @@ export async function convert<T extends Node>(ast: T): Promise<[Warning[], T]> {
 }
 
 function stripAtFlowAnnotation(ast: File): File {
-  let { leadingComments } = ast.program.body[0]
-  if (leadingComments) {
-    let index = leadingComments.findIndex(_ => _.value.trim() === '@flow')
+  if (ast.program.body.length === 0) {
+    return ast
+  }
+  // Recast uses a different representation of comments.
+  let { comments } = ast.program.body[0] as any
+  if (comments) {
+    let index = comments.findIndex(
+      (_: any) =>
+        _.leading &&
+        (_.value.trim() === '@flow' || _.value.trim() === '@noflow')
+    )
     if (index > -1) {
-      pullAt(leadingComments, index)
+      pullAt(comments, index)
     }
   }
   return ast

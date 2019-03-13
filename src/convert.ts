@@ -292,7 +292,22 @@ export function _toTsType(node: FlowType | Node): TSType {
         // Rename to 'Readonly'
         node.id.name = 'Readonly'
         return toTsType(node)
-      } else if (node.id.name === '$FlowFixMe') {
+      } else if (
+        node.id.type === 'Identifier' &&
+        node.id.name === '$ReadOnlyArray'
+      ) {
+        node.id.name = 'ReadonlyArray'
+        return toTsType(node)
+      } else if (node.id.type === 'Identifier' && node.id.name === '$Shape') {
+        node.id.name = 'Partial'
+        return toTsType(node)
+      } else if (
+        node.id.type === 'Identifier' &&
+        node.id.name === '$FlowFixMe'
+      ) {
+        // `$FlowFixMe` can be used as a type annotation, use `any` instead.
+        return tsAnyKeyword()
+      } else if (node.id.type === 'Identifier' && node.id.name === 'Object') {
         return tsAnyKeyword()
       } else if (node.typeParameters && node.typeParameters.params.length) {
         return tsTypeReference(
