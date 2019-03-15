@@ -1,9 +1,8 @@
 import * as recast from 'recast'
 import { parse, ParserOptions } from '@babel/parser'
 import traverse, { Node, Visitor } from '@babel/traverse'
-import { File } from '@babel/types'
 import { sync } from 'glob'
-import { dropWhile, pullAt } from 'lodash'
+import { dropWhile } from 'lodash'
 import { EOL } from 'os'
 import { relative, resolve } from 'path'
 
@@ -48,10 +47,12 @@ export async function compile(code: string, filename: string) {
     )
   })
 
-  return addTrailingSpace(
-    // @ts-ignore
-    trimLeadingNewlines(recast.print(stripAtFlowAnnotation(ast)).code)
-  )
+  // @ts-ignore
+  let output = recast.print(ast).code
+  output = stripFlowDeclaration(output)
+  output = trimLeadingNewlines(output)
+  output = addTrailingSpace(output)
+  return output
 }
 
 /**
@@ -97,23 +98,11 @@ export async function convert<T extends Node>(ast: T): Promise<[Warning[], T]> {
   return [warnings, ast]
 }
 
-function stripAtFlowAnnotation(ast: File): File {
-  if (ast.program.body.length === 0) {
-    return ast
-  }
-  // Recast uses a different representation of comments.
-  let { comments } = ast.program.body[0] as any
-  if (comments) {
-    let index = comments.findIndex(
-      (_: any) =>
-        _.leading &&
-        (_.value.trim() === '@flow' || _.value.trim() === '@noflow')
-    )
-    if (index > -1) {
-      pullAt(comments, index)
-    }
-  }
-  return ast
+function stripFlowDeclaration(output: string): string {
+  return output
+    .replace('/* @flow */\n', '')
+    .replace('// @flow\n', '')
+    .replace(' * @flow\n', '')
 }
 
 function addTrailingSpace(file: string): string {

@@ -1,4 +1,5 @@
 type A = undefined;
+
 type B = null;
 type C = boolean;
 type D = number;
@@ -10,7 +11,7 @@ type G = {
 };
 
 type H = {
-  a: number,
+  a: number // comment,
   b: string | null | undefined
 };
 

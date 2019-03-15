@@ -1,1 +1,8 @@
+/*
+ * A bunch of nonsense.
+ *
+ *
+ * Maybe a bit more.
+ */
+
 type MyType = any;

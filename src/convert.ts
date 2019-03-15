@@ -62,7 +62,7 @@ import {
 } from '@babel/types'
 import { generateFreeIdentifier } from './utils'
 
-export function typeAliasToTsTypeAliasDeclaration(
+function typeAliasToTsTypeAliasDeclaration(
   node: TypeAlias
 ): TSTypeAliasDeclaration {
   const typeParameters = node.typeParameters
@@ -211,6 +211,8 @@ export function _toTs(node: Flow | TSType | Node): TSType | Node {
     case 'InterfaceExtends':
     case 'InterfaceDeclaration':
     case 'TypeAlias':
+      // @ts-ignore
+      return typeAliasToTsTypeAliasDeclaration(node)
     case 'TypeParameterInstantiation':
     case 'ObjectTypeCallProperty':
     case 'ObjectTypeIndexer':
@@ -222,9 +224,7 @@ export function _toTs(node: Flow | TSType | Node): TSType | Node {
 }
 
 function copyCommentsToFrom(to: TSType | Node, from: FlowType | TSType | Node) {
-  to.leadingComments = from.leadingComments
-  to.innerComments = from.innerComments
-  to.trailingComments = from.trailingComments
+  ;(to as any).comments = (from as any).comments
 }
 
 export const toTs: typeof _toTs = (node: any) => {

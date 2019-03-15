@@ -1,3 +1,12 @@
+/**
+ * Block comment.
+ */
+
+/**
+ * Bock comment on a type.
+ *
+ * @public
+ */
 type MyType = any;
 
 /**
@@ -11,5 +20,8 @@ function add(a: number, b: number): number {
 }
 
 export type MyType = {
+ /**
+  * A description of myProps.
+  */
  myProps: number
 };

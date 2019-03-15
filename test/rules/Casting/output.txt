@@ -1,1 +1,1 @@
-let Casting = (42 as number);
+let Casting = (42 as number)

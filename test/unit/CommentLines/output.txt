@@ -1,8 +1,11 @@
+// A normal comment.
 type MyType = any;
 
 export type AnotherType = {
+    // A comment in the type.
     thing: string,
     complexThing: {
+        // A comment in the type.
         thing: string
     }
 };
