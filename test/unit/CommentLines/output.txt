@@ -1,0 +1,8 @@
+type MyType = any;
+
+export type AnotherType = {
+    thing: string,
+    complexThing: {
+        thing: string
+    }
+};

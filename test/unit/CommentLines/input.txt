@@ -1,0 +1,12 @@
+// A normal comment.
+type MyType = any
+
+// A comment above a type.
+export type AnotherType = {
+    // A comment in the type.
+    thing: string;
+    complexThing: {
+        // A comment in the type.
+        thing: string;
+    }
+}

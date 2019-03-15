@@ -1,0 +1,9 @@
+/*
+ * A bunch of nonsense.
+ *
+ * @flow
+ *
+ * Maybe a bit more.
+ */
+
+type MyType = any

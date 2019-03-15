@@ -1,0 +1,32 @@
+/**
+ * Block comment.
+ */
+
+/**
+ * Bock comment on a type.
+ *
+ * @public
+ */
+type MyType = any;
+
+/**
+ * Block comment on a function.
+ *
+ * @public
+ */
+ function add(a: number, b:number): number {
+     // Comment inside function.
+     return a + b;
+ }
+
+/**
+ * Block comment on a function.
+ *
+ * @public
+ */
+ export type MyType = {
+     /**
+      * A description of myProps.
+      */
+     myProps: number;
+ }
